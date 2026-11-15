@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  LEADERSHIP
+  TEACHER
+}
+
+enum AssessmentType {
+  QUIZ
+  ASSIGNMENT
+  EXAM
+  OTHER
+}
+
+model User {
+  id           Int                 @id @default(autoincrement())
+  email        String              @unique
+  name         String
+  passwordHash String
+  role         Role                @default(TEACHER)
+  createdAt    DateTime            @default(now())
+  assignments  TeacherAssignment[]
+  imports      ImportBatch[]
+}
+
+model AcademicYear {
+  id       Int          @id @default(autoincrement())
+  name     String       @unique // e.g. "2026-2027"
+  startsOn DateTime     @db.Date
+  endsOn   DateTime     @db.Date
+  terms    Term[]
+  classes  ClassGroup[]
+}
+
+model Term {
+  id          Int          @id @default(autoincrement())
+  yearId      Int
+  year        AcademicYear @relation(fields: [yearId], references: [id])
+  number      Int // 1, 2, 3
+  name        String
+  startsOn    DateTime     @db.Date
+  endsOn      DateTime     @db.Date
+  assessments Assessment[]
+
+  @@unique([yearId, number])
+}
+
+model ClassGroup {
+  id          Int                 @id @default(autoincrement())
+  yearId      Int
+  year        AcademicYear        @relation(fields: [yearId], references: [id])
+  name        String // e.g. "8A"
+  gradeLevel  Int
+  students    Student[]
+  assignments TeacherAssignment[]
+  assessments Assessment[]
+
+  @@unique([yearId, name])
+}
+
+model Student {
+  id           Int        @id @default(autoincrement())
+  studentCode  String     @unique // school's own ID: the anchor for imports
+  fullName     String
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+  results      Result[]
+}
+
+model Subject {
+  id          Int                 @id @default(autoincrement())
+  name        String              @unique
+  code        String?             @unique
+  assignments TeacherAssignment[]
+  assessments Assessment[]
+}
+
+model TeacherAssignment {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  subjectId    Int
+  subject      Subject    @relation(fields: [subjectId], references: [id])
+  classGroupId Int
+  classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
+
+  @@unique([userId, subjectId, classGroupId])
+}
+
+model Assessment {
+  id           Int            @id @default(autoincrement())
+  title        String
+  type         AssessmentType @default(QUIZ)
+  subjectId    Int
+  subject      Subject        @relation(fields: [subjectId], references: [id])
+  classGroupId Int
+  classGroup   ClassGroup     @relation(fields: [classGroupId], references: [id])
+  termId       Int
+  term         Term           @relation(fields: [termId], references: [id])
+  maxScore     Decimal        @db.Decimal(6, 2)
+  weight       Decimal        @default(1) @db.Decimal(5, 2)
+  date         DateTime       @db.Date
+  results      Result[]
+}
+
+model Result {
+  id            Int          @id @default(autoincrement())
+  assessmentId  Int
+  assessment    Assessment   @relation(fields: [assessmentId], references: [id], onDelete: Cascade)
+  studentId     Int
+  student       Student      @relation(fields: [studentId], references: [id])
+  score         Decimal      @db.Decimal(6, 2)
+  importBatchId Int?
+  importBatch   ImportBatch? @relation(fields: [importBatchId], references: [id])
+
+  @@unique([assessmentId, studentId])
+}
+
+// Every upload is logged so any number can be traced to its source file.
+model ImportBatch {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  user      User     @relation(fields: [userId], references: [id])
+  fileName  String
+  status    String   @default("PENDING") // PENDING | COMPLETED | FAILED
+  rowCount  Int      @default(0)
+  createdAt DateTime @default(now())
+  results   Result[]
+}
