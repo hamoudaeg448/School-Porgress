@@ -64,3 +64,22 @@ button.ghost { background: transparent; color: var(--ink); border: 1px solid var
 
 .empty { padding: 1.25rem; border: 1px dashed var(--line); border-radius: 10px; }
 .empty p { margin: 0; color: var(--muted); }
+
+.nav { display: flex; align-items: center; gap: 1.25rem; }
+.nav a { color: var(--ink); text-decoration: none; padding: .25rem 0; border-bottom: 2px solid transparent; }
+.nav a:hover { border-bottom-color: var(--accent); }
+
+.card { margin: 1.25rem 0; padding: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+.inline-form { display: flex; flex-wrap: wrap; align-items: end; gap: .75rem; }
+.inline-form label { display: block; font-size: .9rem; }
+.inline-form input { width: 11rem; }
+.inline-form .error { flex-basis: 100%; }
+
+.table-wrap { overflow-x: auto; margin-top: 1.25rem; background: var(--surface); border: 1px solid var(--line); border-radius: 10px; }
+table { width: 100%; border-collapse: collapse; }
+th, td { text-align: left; padding: .7rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+th { color: var(--muted); font-weight: 500; font-size: .9rem; }
+td.actions { display: flex; gap: .75rem; align-items: flex-start; flex-wrap: wrap; }
+details.edit summary { cursor: pointer; color: var(--accent); padding: .65rem 0; }
+details.edit[open] { flex-basis: 100%; }
