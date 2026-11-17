@@ -26,4 +26,4 @@ Next.js + Prisma + MySQL. Tracks student results by subject, term and year.
 - `src/app/`: login, dashboard (overview, classes) and server actions
 
 ## Next steps
-Student list import from Excel (IDs kept as text, e.g. 0001), score import with column mapping and validation, then charts.
+Student list import from Excel (IDs kept as text, e.g. 0001), score import with column mapping and validation.

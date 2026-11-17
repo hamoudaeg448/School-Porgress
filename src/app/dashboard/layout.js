@@ -13,6 +13,7 @@ export default async function DashboardLayout({ children }) {
         <nav className="nav">
           <strong>School Progress</strong>
           <Link href="/dashboard">Overview</Link>
+          <Link href="/dashboard/students">Students</Link>
           <Link href="/dashboard/classes">Classes</Link>
         </nav>
         <form action={logout}>

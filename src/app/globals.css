@@ -7,6 +7,9 @@
   --accent: #0e5c63;
   --accent-ink: #ffffff;
   --alert: #b3261e;
+  --good: #1f7a4d;
+  --mid: #2f6fa8;
+  --bad: #b3261e;
 }
 @media (prefers-color-scheme: dark) {
   :root {
@@ -18,6 +21,9 @@
     --accent: #4fb3ba;
     --accent-ink: #06222a;
     --alert: #ff8a80;
+    --good: #5fcf94;
+    --mid: #6fb1ea;
+    --bad: #ff8a80;
   }
 }
 * { box-sizing: border-box; }
@@ -83,3 +89,34 @@ th { color: var(--muted); font-weight: 500; font-size: .9rem; }
 td.actions { display: flex; gap: .75rem; align-items: flex-start; flex-wrap: wrap; }
 details.edit summary { cursor: pointer; color: var(--accent); padding: .65rem 0; }
 details.edit[open] { flex-basis: 100%; }
+
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.25rem; }
+.grid-2 .card { margin: 1.25rem 0 0; }
+.card h2.sub { margin-top: 1.5rem; }
+.small { font-size: .9rem; margin: 0 0 .75rem; }
+a { color: var(--accent); }
+select { width: 11rem; padding: .6rem .7rem; margin-top: .3rem; border: 1px solid var(--line); border-radius: 6px; background: var(--surface); color: var(--ink); font: inherit; }
+.filters { margin: 1.25rem 0; }
+.table-wrap.flat { border: 0; margin-top: .5rem; }
+
+.bars { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .6rem; }
+.bars li { display: grid; grid-template-columns: 7.5rem 1fr 3.2rem; align-items: center; gap: .75rem; }
+.bars strong { text-align: right; }
+.scorebar { position: relative; height: .8rem; min-width: 6rem; background: var(--line); border-radius: 999px; }
+.scorebar .fill { height: 100%; border-radius: 999px; background: var(--mid); }
+.scorebar .fill.strong { background: var(--good); }
+.scorebar .fill.support { background: var(--bad); }
+.scorebar .marker { position: absolute; top: -3px; width: 3px; height: calc(100% + 6px); background: var(--ink); border-radius: 2px; transform: translateX(-1px); }
+.score-cell { display: grid; grid-template-columns: minmax(6rem, 14rem) 3.2rem; align-items: center; gap: .75rem; }
+
+.chip { display: inline-block; padding: .15rem .6rem; border-radius: 999px; font-size: .85rem; font-weight: 500; border: 1px solid currentColor; }
+.chip.big { font-size: 1rem; }
+.chip.strong { color: var(--good); }
+.chip.ontrack { color: var(--mid); }
+.chip.support { color: var(--bad); }
+
+.bands { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .6rem; }
+.bands li { display: flex; align-items: center; gap: .75rem; font-size: 1.4rem; font-weight: 600; }
+.bands small { font-size: .85rem; font-weight: 400; color: var(--muted); }
+.reasons { list-style: none; margin: .75rem 0 0; padding: 0; display: grid; gap: .8rem; }
+.reasons small { color: var(--muted); }
