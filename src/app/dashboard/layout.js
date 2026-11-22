@@ -16,6 +16,7 @@ export default async function DashboardLayout({ children }) {
           <Link href="/dashboard/students">Students</Link>
           <Link href="/dashboard/classes">Classes</Link>
           <Link href="/dashboard/import/students">Import students</Link>
+          <Link href="/dashboard/import/scores">Import scores</Link>
         </nav>
         <form action={logout}>
           <Link href="/dashboard/account">{session.name}</Link>
