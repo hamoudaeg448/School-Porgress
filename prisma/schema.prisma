@@ -68,11 +68,13 @@ model ClassGroup {
 
 model Student {
   id           Int        @id @default(autoincrement())
-  studentCode  String     @unique // school's own ID: the anchor for imports
+  studentCode  String // number within the class (0001, 0002...). Unique per class.
   fullName     String
   classGroupId Int
   classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
   results      Result[]
+
+  @@unique([classGroupId, studentCode])
 }
 
 model Subject {

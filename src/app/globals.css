@@ -124,3 +124,7 @@ select { width: 11rem; padding: .6rem .7rem; margin-top: .3rem; border: 1px soli
 .chip.muted { color: var(--muted); }
 .preview { max-height: 22rem; overflow: auto; }
 .inline-form input[type="file"] { width: 18rem; }
+
+.stack-form { display: grid; gap: 1rem; }
+.stack-form label { display: block; font-size: .9rem; }
+.card.narrow { max-width: 28rem; }

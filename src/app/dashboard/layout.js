@@ -18,7 +18,7 @@ export default async function DashboardLayout({ children }) {
           <Link href="/dashboard/import/students">Import students</Link>
         </nav>
         <form action={logout}>
-          <span className="muted">{session.name}</span>
+          <Link href="/dashboard/account">{session.name}</Link>
           <button className="ghost" type="submit">Sign out</button>
         </form>
       </header>

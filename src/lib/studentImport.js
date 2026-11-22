@@ -7,8 +7,7 @@ export async function validateStudents(classId, rows) {
   const codes = rows.map((r) => normalizeNo(String(r.no || ""))).filter(Boolean);
   const existing = codes.length
     ? await db.student.findMany({
-        where: { studentCode: { in: codes } },
-        include: { classGroup: { select: { name: true } } },
+        where: { classGroupId: classId, studentCode: { in: codes } },
       })
     : [];
   const byCode = new Map(existing.map((s) => [s.studentCode, s]));
@@ -33,10 +32,8 @@ export async function validateStudents(classId, rows) {
 
     const ex = byCode.get(code);
     if (ex) {
-      if (ex.classGroupId === classId && ex.fullName === name) {
-        return { ...out, status: "exists", note: "Already imported" };
-      }
-      return { ...out, status: "error", note: `Number already used by ${ex.fullName} (${ex.classGroup.name})` };
+      if (ex.fullName === name) return { ...out, status: "exists", note: "Already imported" };
+      return { ...out, status: "error", note: `Number already used by ${ex.fullName} in this class` };
     }
     if (nameCount.get(name.toLowerCase()) > 1) out.note = "This name appears more than once";
     return out;
