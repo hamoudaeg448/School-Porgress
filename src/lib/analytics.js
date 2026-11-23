@@ -15,10 +15,10 @@ export const fmt = (n) => (n == null ? "—" : `${Math.round(n)}%`);
 const r = (n) => Math.round(n);
 
 // One flat row per result, with the score converted to a percentage.
-export async function loadResults(yearId, studentIds) {
+export async function loadResults(yearId, studentIds, subjectId) {
   const rows = await db.result.findMany({
     where: {
-      assessment: { term: { yearId } },
+      assessment: { term: { yearId }, ...(subjectId ? { subjectId } : {}) },
       ...(studentIds ? { studentId: { in: studentIds } } : {}),
     },
     select: {
