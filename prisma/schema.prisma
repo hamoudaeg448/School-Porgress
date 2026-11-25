@@ -68,7 +68,7 @@ model ClassGroup {
 
 model Student {
   id           Int        @id @default(autoincrement())
-  studentCode  String // number within the class (0001, 0002...). Unique per class.
+  studentCode  String // number within the class (001, 002...). Unique per class.
   fullName     String
   classGroupId Int
   classGroup   ClassGroup @relation(fields: [classGroupId], references: [id])
