@@ -13,7 +13,8 @@ function decode(s) {
     if (k === "gt") return ">";
     if (k === "quot") return '"';
     if (k === "apos") return "'";
-    const code = k[1] === "x" ? parseInt(k.slice(2), 16) : parseInt(k.slice(1), 10);
+    const code =
+      k[1] === "x" ? parseInt(k.slice(2), 16) : parseInt(k.slice(1), 10);
     try {
       return String.fromCodePoint(code);
     } catch {
@@ -31,13 +32,14 @@ const attr = (tag, name) => {
 function textRuns(xml) {
   const clean = xml.replace(/<rPh\b[\s\S]*?<\/rPh>/g, "");
   let out = "";
-  for (const m of clean.matchAll(/<t\b[^>]*?(?:\/>|>([\s\S]*?)<\/t>)/g)) out += m[1] ? decode(m[1]) : "";
+  for (const m of clean.matchAll(/<t\b[^>]*?(?:\/>|>([\s\S]*?)<\/t>)/g))
+    out += m[1] ? decode(m[1]) : "";
   return out;
 }
 
 // Student numbers that are plain digits become 4 digits: 1 -> 0001.
 export function normalizeNo(no) {
-  return /^\d+$/.test(no) ? no.padStart(4, "0") : no;
+  return /^\d+$/.test(no) ? no.padStart(3, "0") : no;
 }
 
 export async function readStudentSheet(buffer) {
@@ -46,7 +48,9 @@ export async function readStudentSheet(buffer) {
     files = unzipSync(new Uint8Array(buffer), {
       filter: (f) =>
         f.originalSize < MAX_UNZIPPED &&
-        /^xl\/(workbook\.xml|_rels\/workbook\.xml\.rels|sharedStrings\.xml|worksheets\/[^/]+\.xml)$/.test(f.name),
+        /^xl\/(workbook\.xml|_rels\/workbook\.xml\.rels|sharedStrings\.xml|worksheets\/[^/]+\.xml)$/.test(
+          f.name,
+        ),
     });
   } catch {
     throw new Error("Not a valid .xlsx file.");
@@ -70,9 +74,11 @@ export async function readStudentSheet(buffer) {
   const sheetXml = read(target.startsWith("xl/") ? target : `xl/${target}`);
   if (!sheetXml) throw new Error("Could not read the first sheet.");
 
-  const shared = [...read("xl/sharedStrings.xml").matchAll(/<si\b[^>]*?(?:\/>|>([\s\S]*?)<\/si>)/g)].map((m) =>
-    m[1] ? textRuns(m[1]) : ""
-  );
+  const shared = [
+    ...read("xl/sharedStrings.xml").matchAll(
+      /<si\b[^>]*?(?:\/>|>([\s\S]*?)<\/si>)/g,
+    ),
+  ].map((m) => (m[1] ? textRuns(m[1]) : ""));
 
   const cellText = (attrs, inner) => {
     const type = attr(attrs, "t");
@@ -89,22 +95,28 @@ export async function readStudentSheet(buffer) {
 
   const rows = [];
   let auto = 0;
-  for (const rm of sheetXml.matchAll(/<row\b([^>]*?)(?:\/>|>([\s\S]*?)<\/row>)/g)) {
+  for (const rm of sheetXml.matchAll(
+    /<row\b([^>]*?)(?:\/>|>([\s\S]*?)<\/row>)/g,
+  )) {
     auto += 1;
     const line = Number(attr(rm[1], "r")) || auto;
     let no = "";
     let name = "";
-    for (const cm of (rm[2] || "").matchAll(/<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g)) {
+    for (const cm of (rm[2] || "").matchAll(
+      /<c\b([^>]*?)(?:\/>|>([\s\S]*?)<\/c>)/g,
+    )) {
       const col = (attr(cm[1], "r").match(/^[A-Z]+/) || [""])[0];
       if (col === "A") no = cellText(cm[1], cm[2] || "");
-      else if (col === "B") name = cellText(cm[1], cm[2] || "").replace(/\s+/g, " ");
+      else if (col === "B")
+        name = cellText(cm[1], cm[2] || "").replace(/\s+/g, " ");
     }
     if (!no && !name) continue;
     rows.push({ line, no, name });
   }
 
   // Skip a header row such as "Student No | Student Name".
-  if (rows.length && !/^\d+$/.test(rows[0].no) && /name/i.test(rows[0].name)) rows.shift();
+  if (rows.length && !/^\d+$/.test(rows[0].no) && /name/i.test(rows[0].name))
+    rows.shift();
 
   return { sheet: sheets[0].name, otherSheets: sheets.length - 1, rows };
 }
